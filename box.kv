@@ -1,0 +1,874 @@
+#:import Button kivy.uix.button.Button
+#:import GridLayout kivy.uix.gridlayout.GridLayout
+#:import partial functools.partial
+<Box@BoxLayout>:
+    bg: 0, 0, 0, 0
+
+    canvas:
+        Color:
+            rgba: root.bg
+        Rectangle:
+            pos: self.pos
+            size: self.size
+WindowManager:
+	MyGridWindow:
+	PreferencesWindow:
+	HelpWindow:
+	FileSelectorInternalWindow:
+	FileSelectorExternalWindow:
+	InAppView:
+	Favorites:
+<Favorites>:
+	name: "favorites"
+	Box: 
+		bg: app.theme_cls.bg_darkest
+		GridLayout:
+			cols: 1
+			ScrollView:
+				on_parent:
+					grif = GridLayout(cols=2, size_hint_y=len(root.favoritesText)/10)
+					for i in root.favoritesText: grif.add_widget(Button(text=i, size_hint=(1, 0.1), on_press=partial(root.runFavorite, str(i)))); grif.add_widget(Button(text="Delete", size_hint=(1, 0.1), on_press=partial(root.remove, str(i))))
+					self.add_widget(grif)
+			MDRectangleFlatIconButton:
+				icon: "arrow-left-circle" 
+				text: "Back"
+				md_bg_color: 0.4, 0.4, 0.4, 1
+				text_color: 1, 1, 1, 1
+				pos_hint: {"center_y": 0.1}
+				size_hint: (1, 0.15)
+				on_release: 
+					app.root.current = "main"
+
+
+<MyGridWindow>
+	name: "main"
+	sauces: sauces
+
+
+	BoxLayout:
+		orientation: "vertical"
+		size: root.width, root.height
+		MDTextFieldRect:
+			id: sauces
+			hint_text: "Enter Sauce Set"
+			text_color: 0, 0, 0, 1
+			normal_color: 0.8, 0.8, 0.8, 1
+			color_active: 1, 1, 1, 1
+			multiline:True
+			height: "30dp"
+			size_hint: 1, None
+			focus:True
+		Box: 
+			bg: app.theme_cls.bg_darkest
+			ScrollView:
+				GridLayout:
+					cols:2
+					size_hint_y: None
+					height: self.minimum_height
+					MDLabel:
+						id: display_text
+						text: "Sauce and Score "
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_size: 20
+						text_size: self.width, None
+						halign:'center'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						id: pages
+						text: "# of Pages"
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_size: 20
+						text_size: self.width, None
+						halign:'center'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+						size_hint_x: 0.1
+
+		GridLayout:
+			cols:4
+			size_hint_y: None
+			height: self.minimum_height
+			size_hint: (1, 0.15)
+			MDRectangleFlatIconButton:
+				icon: "heart"
+				text: "Add To Favorites"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				pos_hint: {"center_y": 0.1}
+				size_hint: (1, 0.2)
+				on_press: root.addToFavorites()
+			MDRectangleFlatIconButton:
+				icon: "arrow-left-circle"
+				text: "Previous Sauce"
+				theme_text_color: "Custom"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				size_hint: (1, 0.1)
+				on_press: root.prevSauce()
+			MDRectangleFlatIconButton:
+				icon: "arrow-right-circle"
+				text: "Next Sauce"
+				theme_text_color: "Custom"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				size_hint: (1, 0.1)
+				on_press: root.nextSauce()
+			MDRectangleFlatIconButton:
+				icon: "filter"
+				text: "Sauce Search Codes"
+				theme_text_color: "Custom"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				size_hint: (1, 0.1)
+				on_press: root.keyChange()
+
+	
+		MDRectangleFlatIconButton:
+			icon: "arrow-right"
+			text: "Score Sauce Set"
+			theme_text_color: "Custom"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.3}
+			size_hint: (1, 0.2)
+			on_press: root.run_pressed()
+		
+		GridLayout:
+			cols:2
+			size_hint_y: 0.4
+			height: self.minimum_height
+			MDRectangleFlatIconButton:
+				icon: "download"
+				text: "Download Sauce"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				pos_hint: {"center_y": 0.1}
+				size_hint: (1, 0.2)
+				on_press: root.downloadDojin()
+			MDRectangleFlatIconButton:
+				icon: "heart"
+				text: "Favorites"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				pos_hint: {"center_y": 0.1}
+				size_hint: (1, 0.2)
+				on_press: app.root.current = "favorites"
+			MDRectangleFlatIconButton:
+				icon: "open-in-new"
+				text: "Open Sauce Set In Browser"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				pos_hint: {"center_y": 0.1}
+				size_hint: (1, 0.2)
+				on_press: root.openInBrowser()
+			MDRectangleFlatIconButton:
+				icon: "open-in-app"
+				text: "Open In InAppView"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				pos_hint: {"center_y": 0.1}
+				size_hint: (1, 0.2)
+				on_press: root.inappviewpreload();app.root.current = "inappview"
+		MDRectangleFlatIconButton:
+			icon: "settings"
+			text: "Preferences"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.2)
+			on_release: app.root.current = "settings"
+
+<PreferencesWindow>:
+	id: preferences_window
+	name: "settings"
+	BoxLayout: 
+		orientation: "vertical"
+		size: root.width, root.height
+		GridLayout:
+			cols:3
+			size_hint_y: None
+			height: self.minimum_height
+			MDTextFieldRect:
+				id: tagAddRemove
+				hint_text: "Enter Tag Set"
+				text_color: 0, 0, 0, 1
+				normal_color: 0.8, 0.8, 0.8, 1
+				color_active: 1, 1, 1, 1
+				multiline: False
+				height: "30dp"
+				size_hint: 1, None
+				focus:True
+			MDTextFieldRect:
+				id: tagAddRemoveScore
+				hint_text: "Enter Score"
+				text_color: 0, 0, 0, 1
+				normal_color: 0.8, 0.8, 0.8, 1
+				color_active: 1, 1, 1, 1
+				multiline: False
+				height: "30dp"
+				size_hint: 1, None
+				focus:True
+			Button:
+				text:"Submit"
+				size_hint_x: 0.33
+				on_release: root.settings();root.settingUpdate()
+		Box:
+			bg: app.theme_cls.bg_darkest
+			ScrollView:
+				GridLayout:
+					cols: 4
+					size_hint_y: None
+					height: self.minimum_height
+					MDLabel:
+						id: settings_count01
+						text: root.settings_count01
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						text_size: self.width, None
+						font_size: 20
+						halign:'center'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+						size_hint_x: 0.25
+					MDLabel:
+						id: settings_text
+						text: root.settings_text
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						text_size: self.width, None
+						font_size: 20
+						halign:'center'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						id: settings_count
+						text: root.settings_count
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						text_size: self.width, None
+						font_size: 20
+						halign:'center'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+						size_hint_x: 0.25
+					MDLabel:
+						id: settings_score
+						text: root.settings_score
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						text_size: self.width, None
+						font_size: 20
+						halign:'center'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+						size_hint_x: 0.3
+		MDRectangleFlatIconButton: 
+			icon: "folder-download"
+			text: "Download Directory Internal View"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.15)
+			on_release: app.root.current = "fileselectorinternal"
+		MDRectangleFlatIconButton: 
+			icon: "folder-download"
+			text: "Download Directory External View"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.15)
+			on_release: root.toast_message()
+		MDRectangleFlatIconButton: 
+			icon: "help"
+			text: "Help"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.15)
+			on_release: app.root.current = "help"
+		MDRectangleFlatIconButton:
+			icon: "arrow-left-circle" 
+			text: "Back"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.15)
+			on_release: 
+				app.root.current = "main"
+				app.root.transition.direction: "right"
+
+<FileSelectorInternalWindow>:
+	id:file_selector_window
+	name: "fileselectorinternal"
+	BoxLayout: 
+		orientation: "vertical"
+		size: root.width, root.height
+
+		FileChooserListView:
+			id: filechooser
+			path: root.defaultpath
+			dirselect: True
+			rootpath: '/'
+			show_hidden: True
+		MDRectangleFlatIconButton:
+			icon: "folder" 
+			text: "Select Folder"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.1)
+			on_release:  file_selector_window.selected(filechooser.selection);app.root.current = "settings"
+		MDRectangleFlatIconButton:
+			icon: "close-circle" 
+			text: "Cancel"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.1)
+			on_release:  app.root.current = "settings"
+<FileSelectorExternalWindow>:
+	id:file_selector_window
+	name: "fileselectorexternal"
+	BoxLayout: 
+		orientation: "vertical"
+		size: root.width, root.height
+
+		FileChooserListView:
+			id: filechooser
+			path: root.defaultpath
+			dirselect: True
+			rootpath: '/'
+			show_hidden: True
+		MDRectangleFlatIconButton:
+			icon: "folder" 
+			text: "Select Folder"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.1)
+			on_release:  file_selector_window.selected(filechooser.selection);app.root.current = "settings"
+		MDRectangleFlatIconButton:
+			icon: "close-circle" 
+			text: "Cancel"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.1)
+			on_release:  app.root.current = "settings"
+<InAppView>
+	id:in_app_view
+	name: "inappview"
+	on_enter: root.next()
+	BoxLayout:
+		orientation: "vertical"
+		size: root.width, root.height
+
+		Box:
+			bg: app.theme_cls.bg_darkest
+			AsyncImage:
+				source: root.link
+		GridLayout:
+			cols: 2
+			size_hint_y: 0.1
+			height: self.minimum_height
+			MDRectangleFlatIconButton:
+				icon: "arrow-left-bold" 
+				text: "Previous"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				pos_hint: {"center_y": 0.1}
+				size_hint: (1, 0.1)
+				on_release: root.previous()
+			MDRectangleFlatIconButton:
+				icon: "arrow-right-bold" 
+				text: "Next"
+				md_bg_color: 0.3, 0.3, 0.3, 1
+				text_color: 1, 1, 1, 1
+				pos_hint: {"center_y": 0.1}
+				size_hint: (1, 0.1)
+				on_release: root.next()
+		MDRectangleFlatIconButton:
+			icon: "close-circle" 
+			text: "Exit"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.1)
+			on_release: root.exit();app.root.current = "main"
+
+<HelpWindow>:
+	name: "help"
+	BoxLayout: 
+		orientation: "vertical"
+		size: root.width, root.height
+
+		Box:
+			bg: app.theme_cls.bg_darkest
+			ScrollView:
+				GridLayout:
+					cols: 1
+					size_hint_y: None
+					height: self.minimum_height
+
+					MDLabel:
+						text: "Score Sauce Set: \n"
+						theme_text_color: "Custom"
+						text_color: 0.95, 0.47, 0.059, 1
+						font_style: "H4"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: "What Does This Feature Do?\n"
+						theme_text_color: "Custom"
+						text_color: 0.6, 0.6, 0.6, 1
+						font_style: "H6"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'The "Score Sauce Set" feature is an easy-to-use filter on any size of Doujin intake. The amount of codes that can be run at the same time varies on the performance of your device. It utilizes the preference info that you apply to request tags from the inputted Doujin set. If tags in your preferences align with tags on the particular Doujin work, it will use basic math to apply how likely you are to like this particular read. The higher the score, the better it should be!\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Example of Operation:'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "H6"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'As for an example of operation, say you have a small set of Dojin identification numbers (177013, 215600, 230053). You would enter the information in the text bar on the main page. However, this bar only accepts a couple of formats for entering identification numbers. Those formats are below with the same small set that we started with: \n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Format 1:'
+						theme_text_color: "Custom"
+						text_color: 0.87, 0.1, 0.1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      https://nhentai.net/g/177013 \n      https://nhentai.net/g/215600 \n      https://nhentai.net/g/230053\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Format 2:'
+						theme_text_color: "Custom"
+						text_color: 0.87, 0.1, 0.1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      http://nhentai.net/g/177013 \n      http://nhentai.net/g/215600 \n      http://nhentai.net/g/230053\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Format 3:'
+						theme_text_color: "Custom"
+						text_color: 0.87, 0.1, 0.1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      (177013)\n      (215600)\n      (230053)\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Format 4:'
+						theme_text_color: "Custom"
+						text_color: 0.87, 0.1, 0.1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      ~177013\n      ~215600\n      ~230053\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Format 5:'
+						theme_text_color: "Custom"
+						text_color: 0.87, 0.1, 0.1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      -177013\n      -215600\n      -230053\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Format 6:'
+						theme_text_color: "Custom"
+						text_color: 0.87, 0.1, 0.1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      177013\n      215600\n      230053\n\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'It should also be noted that any of these formats can be mixed and matched:\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      (177013)\n      https://nhentai.net/g/215600\n      230053\n\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'In addition to being able to mix and match, the identification number can be formatted with any of the characters in the formats with exception to the https:// and http:// can be merged and still get a proper result:\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      -~(177013)\n      ())()((()())(215600\n      -------230053---\n\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'All the above inputs are valid and will get scored properly.\n\n It also noteworthy that the newline is not necessary to separate identification numbers as it is possible with spaces:\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      (177013) (21560) (230053)\n\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'With the same mindset as the formatting options, dividers can also be mixed and matched:\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      (177013)\n      (21560) (230053)\n\n\n\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+
+
+
+					MDLabel:
+						text: "Download Sauce: \n"
+						theme_text_color: "Custom"
+						text_color: 0.95, 0.47, 0.059, 1
+						font_style: "H4"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: "What Does This Feature Do?\n"
+						theme_text_color: "Custom"
+						text_color: 0.6, 0.6, 0.6, 1
+						font_style: "H6"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'This should be self-explanatory, however, some details could be useful. First off, this downloads the Doujin or Doujins that are being run in the text Bar. It packages the entire Doujin into a neat folder in the Downloads directory on your device. The formatting for entering the identification numbers is the same as the "Score Sauce Set".'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+
+
+
+					MDLabel:
+						text: "Add or Remove Tag: \n"
+						theme_text_color: "Custom"
+						text_color: 0.95, 0.47, 0.059, 1
+						font_style: "H4"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: "What Does This Feature Do?\n"
+						theme_text_color: "Custom"
+						text_color: 0.6, 0.6, 0.6, 1
+						font_style: "H6"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'The "Add or Remove Tag" feature is an extension to the "Score Sauce Set" feature. The "Add or Remove Tag" feature is the method of editing the preferences for scoring the likelihood that you will enjoy the particular Doujin. Not only does this feature allow single-tag evaluation, but it also allows multi-tag evaluation. Read the "Example of Operation" section below for more information. \n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Example of Operation:'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "H6"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'To use this feature, all you need to do is press the "Add or Remove Tag" button on the preferences window. You might notice that there is only one button that says "Submit." This is not a mistake, but a feature to help make tag editing as easy as possible: \n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Adding a Tag:\n'
+						theme_text_color: "Custom"
+						text_color: 0.15, 0.82, 0.02, 1
+						font_style: "Subtitle1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'On the popup after pressing the "Add or Remove Tag" button, you will notice a text box with the label "Tag:". This is where you will be adding a tag. It is as simple as typing the tag out in the form it occurs on nhentai. Then in the box next to that one, you will notice the "Score:" label. This is where you will place the numerical value of how much you like this tag. There are no limits to this number, note that a higher value score means you like it more than a lower value score. To add the tag, just press the "Submit" button.'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      Tag: tag1 | Score: Can be -infinity to infinity\n\n\n\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: "What is multi-tag evaluation?\n"
+						theme_text_color: "Custom"
+						text_color: 0.6, 0.6, 0.6, 1
+						font_style: "Subtitle1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Multi-tag Evaluation is just a fancy way of saying that if a particular Doujin contains multiple sets of tags, you can score it differently based on the presence of other tags. To further elaborate, let us say that a Doujin had 3 tags, we will say these tags are Femdom, Rape, and Lolicon. Not particularly wholesome tags, but they will make this easier to understand. Let us say that a user of this feature does not like rape in their Dojin with the exception that it is a woman that rapes a man(we do not judge). In a singular tag identification, it would locate that Rape tag and score it lower, but for this user, it should be a higher score since it is combined with Femdom. So, the multi-tag evaluation also pinpoints the fact that it also contains the Femdom tag so, it scores the Dojin with the Femdom-Rape individual tag score. However, lest also say that this user does not like this woman that is raping a man to be a loli. This is where the third tag set comes in. The multi-tag evaluation system notes that there is a Lolicon tag and decides to give the Doujin the score of the Femdom-Rape-Lolicon Score.\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Adding multi-tag evaluation:\n'
+						theme_text_color: "Custom"
+						text_color: 0.15, 0.82, 0.02, 1
+						font_style: "Subtitle1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					
+
+					MDLabel:
+						text: 'To operate the Multi-tag evaluation on tag sets, begin with the same operation as adding a single tag. That is, click on the "Add or Remove Tag" button, and type the tag that you desire into the "Tag:" text entry. The difference now though is that to add an additional tag in this combination, you simply separate the tag with a ",". There is no limit to the number of tags that you can add to this set.\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+
+					MDLabel:
+						text: '      Tag: tag1,tag2,tag3... | Score: Can be -infinity to infinity\n\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'Note that this is different from giving each individual tag that score. This will give a score to the Doujin being evaluated if it contains all the tags that are entered in the multi-tag set. This means that a tag with a score of -10 will not be counted if the same tag is in a multi-tag set that overlaps with the tags in the Doujin. Ex: \n\nThe particular Doujin we have has tags #1, #7, and #9. The particular user of this evaluation has preferences that are set up like this:\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: '      tag#1: Score: -10\n      tag#9: Score: 100\n      tag#1,tag#9: Score: 200\n      tag#1,tag#9,tag#7: Score: -100\n\n      Final Doujin Score: -33.333333333333 \n\n'
+						theme_text_color: "Custom"
+						text_color: 0.9, 0.85, 0.18, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'The way that this worked is that, while the user did not appreciate tag#1 on its own, they appreciated it when combined with tag #9. However, rather than getting an end score of 66.666666666667, it received a -33.333333333333. This is because, while the user enjoyed those two tags together, they did not care for it much when those two tags were combined with tag#7.\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: "Why did the Doujin receive a score of -33.333333333333 rather than a score of -100 as it said in the preferences?\n"
+						theme_text_color: "Custom"
+						text_color: 0.6, 0.6, 0.6, 1
+						font_style: "Subtitle1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'The reason why this Doujin did not receive a score of -100 as stated in the preferences is that on every Doujin, the end score is divided by the number of tags evaluated. This helps prevent massive favoring of unadded tags on Doujins.\n\n'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+
+					MDLabel:
+						text: 'Removing a tag or tag set:\n'
+						theme_text_color: "Custom"
+						text_color: 0.15, 0.82, 0.02, 1
+						font_style: "Subtitle1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+					MDLabel:
+						text: 'To remove a tag or tag set(multi-tag evaluation), go to the preferences window and observe the list of tags. Find the tag or tag set that you would like to remove and take note of what number is next to it. Next, you will press the "Add or Remove Tag" button. In the input, within the "Tag:" text box will be where you enter the tag. DO NOT ENTER THE ACTUAL TAG NAME. Enter the number that was next to the tag that you desire to remove, make sure that you enter the "." after the number to help identify that you want to remove a tag. LEAVE THE SCORE BOX EMPTY. After you have entered the tag you wish to remove, press the submit button to remove the tag.'
+						theme_text_color: "Custom"
+						text_color: 1, 1, 1, 1
+						font_style: "Body1"
+						halign:'left'
+						valign:'middle'
+						size_hint_y: None
+						size: self.texture_size
+		MDRectangleFlatIconButton:
+			icon: "arrow-left" 
+			text: "Back"
+			md_bg_color: 0.3, 0.3, 0.3, 1
+			text_color: 1, 1, 1, 1
+			pos_hint: {"center_y": 0.1}
+			size_hint: (1, 0.15)
+			on_release: 
+				app.root.current = "settings"
+				app.root.transition.direction: "right"
+
